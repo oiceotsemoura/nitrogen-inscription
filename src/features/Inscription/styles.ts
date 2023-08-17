@@ -17,13 +17,17 @@ export const Container = styled.div`
 `;
 
 export const Input = styled.input`
-  padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 12px;
-  margin-left: 10px;
+  margin-bottom: 25px;
+  padding: 8px;
   margin-right: 10px;
   width: 95%;
   background-color: #f0f0f0;
+`;
+
+export const Label = styled.label`
+  font-size: 14px;
+  margin-bottom: 4px;
 `;
