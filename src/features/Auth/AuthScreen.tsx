@@ -3,13 +3,45 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Typography, Button } from "@mui/material";
 import { Container, Input, Label, FormContainer, CardWrapper } from "./styles";
+import { BasicModal } from "../../components/Modal/Modal";
+import { BaseText } from "../../components/BaseText/BaseText";
+import { Colors } from "../../config/Colors";
 
 export const AuthScreen = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [cpf, setCPF] = useState("");
+  const [modalErrorIsVisible, setModalErrorIsVisible] = useState<boolean>(true);
+
   return (
     <>
+      <BasicModal
+        isVisible={false}
+        setIsVisible={(status) => setModalErrorIsVisible(status)}
+      >
+        <>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              style={{ backgroundColor: "transparent" }}
+              onClick={() => setModalErrorIsVisible(false)}
+            >
+              <BaseText color={Colors.purple}>Tentar novamente</BaseText>
+            </Button>
+          </div>
+        </>
+      </BasicModal>
       <Container>
         <div style={{ marginBottom: 30 }}>
           <Typography
