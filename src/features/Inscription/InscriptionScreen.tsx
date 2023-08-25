@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   Accordion,
@@ -12,7 +12,7 @@ import {
   Autocomplete,
   TextField,
 } from "@mui/material";
-
+import { LoginRes } from "../../api/Auth";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FormComponent } from "./FormComponent/FormComponent";
 import { Card, Container, Input, Label } from "./styles";
@@ -25,16 +25,26 @@ const talhoes = [
 ];
 
 const chipColor = (status: string) => {
-  if (status === "Em andamento") return "warning";
-  if (status === "Não preenchido") return "default";
-  if (status === "Concluido") return "success";
+  if (status === "started") return "warning";
+  if (status === "empty") return "default";
+  if (status === "completed") return "success";
   return "primary";
 };
 
+const statusObject = {
+  completed: "Concluído",
+  started: "Em andamento",
+  empty: "Não preenchido",
+};
+
 export const InscriptionScreen = () => {
+  const userData: LoginRes = JSON.parse(
+    localStorage.getItem("userData") as string
+  );
+
   return (
     <Container>
-      {talhoes.map((talhao, index) => {
+      {userData.fields.map((field, index) => {
         return (
           <div style={{ marginBottom: 10 }}>
             <Accordion>
@@ -52,10 +62,10 @@ export const InscriptionScreen = () => {
                     marginRight: 10,
                   }}
                 >
-                  <Typography>{talhao.name}</Typography>
+                  <Typography>{field.field_name}</Typography>
                   <Chip
-                    color={chipColor(talhao.status)}
-                    label={talhao.status}
+                    color={chipColor(field.input.field_status)}
+                    label={statusObject[field.input.field_status]}
                   />
                 </div>
               </AccordionSummary>

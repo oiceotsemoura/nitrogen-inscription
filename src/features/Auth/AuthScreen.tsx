@@ -1,43 +1,71 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Typography, Button } from "@mui/material";
+import { Typography, Button, CircularProgress, TextField } from "@mui/material";
 import { Container, Input, Label, FormContainer, CardWrapper } from "./styles";
+import { login } from "../../api/Auth";
 import { BasicModal } from "../../components/Modal/Modal";
 import { BaseText } from "../../components/BaseText/BaseText";
 import { Colors } from "../../config/Colors";
 
 export const AuthScreen = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [cpf, setCPF] = useState("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
   const [modalErrorIsVisible, setModalErrorIsVisible] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const onSubmit = async (data: any) => {
+    try {
+      setIsLoading(true);
+      const res = await login(data);
+      if (res.status !== 200) return setModalErrorIsVisible(true);
+
+      const values = JSON.stringify(res.data);
+      localStorage.setItem("userData", values);
+      setIsLoading(false);
+      navigate("/inscription");
+    } catch (err) {
+      setModalErrorIsVisible(true);
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <BasicModal
-        isVisible={false}
+        isVisible={modalErrorIsVisible}
         setIsVisible={(status) => setModalErrorIsVisible(status)}
       >
         <>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
+            Conta não encontrada
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            O email ou CPF/CNPJ inseridos não foram encontrados em nossa base de
+            clientes inscritos em VAlora 2023. Verifique se está usando os
+            mesmos dados cadastrados ou se realizou a inscrição corretamente.
           </Typography>
           <div
             style={{
               display: "flex",
               flexDirection: "row",
-              justifyContent: "center",
+              justifyContent: "flex-end",
             }}
           >
             <Button
               style={{ backgroundColor: "transparent" }}
               onClick={() => setModalErrorIsVisible(false)}
             >
-              <BaseText color={Colors.purple}>Tentar novamente</BaseText>
+              <BaseText size={17} bold color={Colors.purple}>
+                Tentar novamente
+              </BaseText>
             </Button>
           </div>
         </>
@@ -104,21 +132,40 @@ export const AuthScreen = () => {
                 Milho 2023
               </Typography>
             </div>
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <Input
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                paddingTop: "10px",
+              }}
+            >
+              <TextField
+                variant="filled"
+                style={{
+                  width: "100%",
+                  marginBottom: "12px",
+                  marginRight: "10px",
+                }}
+                disabled={isLoading}
                 type="text"
-                id="nome"
-                placeholder="CPF/CNPJ"
-                value={name}
-                onChange={(event) => setCPF(event.target.value)}
+                id="cpf"
+                label="CPF/CNPJ"
+                {...register("cpf", { required: true })}
               />
 
-              <Input
+              <TextField
+                variant="filled"
+                style={{
+                  width: "100%",
+                  marginBottom: "12px",
+                  marginLeft: "10px",
+                  marginRight: "10px",
+                }}
+                disabled={isLoading}
                 type="text"
-                id="Nome"
-                placeholder="Nome"
-                value={cpf}
-                onChange={(event) => setName(event.target.value)}
+                id="Email"
+                label="Email"
+                {...register("email", { required: true })}
               />
             </div>
             <div
@@ -128,18 +175,17 @@ export const AuthScreen = () => {
                 paddingTop: 20,
               }}
             >
-              <Button
-                onClick={() => {
-                  navigate("/inscription");
-                }}
-                variant="contained"
-              >
-                Avançar
-              </Button>
+              {isLoading ? (
+                <CircularProgress />
+              ) : (
+                <Button type="submit" variant="contained">
+                  Avançar
+                </Button>
+              )}
             </div>
           </FormContainer>
         </div>
       </Container>
-    </>
+    </form>
   );
 };

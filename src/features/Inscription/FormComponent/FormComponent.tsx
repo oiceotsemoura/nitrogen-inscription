@@ -67,7 +67,6 @@ export const FormComponent = () => {
       <Input
         type="number"
         placeholder="Numero entre 0 e 250"
-        value={nitrogenDose}
         {...register("nitrogenDose", { required: true })}
       />
       <div style={{ marginBottom: 25 }}>
@@ -108,16 +107,26 @@ export const FormComponent = () => {
         </Typography>
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
-          defaultValue="female"
           name="radio-buttons-group"
         >
-          <FormControlLabel value="fixa" control={<Radio />} label="Fixa" />
+          <FormControlLabel
+            value="fixa"
+            {...register("dose_type")}
+            control={<Radio />}
+            label="Fixa"
+          />
           <FormControlLabel
             value="variavel"
+            {...register("dose_type")}
             control={<Radio />}
             label="Variável"
           />
-          <FormControlLabel value="ambos" control={<Radio />} label="Ambos" />
+          <FormControlLabel
+            value="ambos"
+            {...register("dose_type")}
+            control={<Radio />}
+            label="Ambos"
+          />
         </RadioGroup>
       </div>
 

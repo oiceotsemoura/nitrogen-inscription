@@ -1,10 +1,6 @@
 import React, { PropsWithChildren } from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { BaseText } from "../BaseText/BaseText";
-import { Colors } from "../../config/Colors";
 
 const style = {
   position: "absolute" as "absolute",
@@ -16,7 +12,8 @@ const style = {
   border: 1,
   borderColor: "transparent",
   boxShadow: 24,
-  p: 4,
+  borderRadius: "20px",
+  p: 3,
 };
 
 interface Props {
@@ -31,7 +28,6 @@ export const BasicModal = ({
 }: PropsWithChildren<Props>) => {
   return (
     <Modal
-      style={{ borderWidth: 30, borderColor: "red" }}
       open={isVisible}
       onClose={() => setIsVisible(false)}
       disableEnforceFocus
