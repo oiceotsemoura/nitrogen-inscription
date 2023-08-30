@@ -18,7 +18,8 @@ export const AuthScreen = () => {
     formState: { errors },
   } = useForm();
 
-  const [modalErrorIsVisible, setModalErrorIsVisible] = useState<boolean>(true);
+  const [modalErrorIsVisible, setModalErrorIsVisible] =
+    useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: any) => {
@@ -27,7 +28,8 @@ export const AuthScreen = () => {
       const res = await login(data);
       if (res.status !== 200) return setModalErrorIsVisible(true);
 
-      const values = JSON.stringify(res.data);
+      const values = JSON.stringify({ ...res.data, ...data });
+
       localStorage.setItem("userData", values);
       setIsLoading(false);
       navigate("/inscription");
@@ -43,32 +45,30 @@ export const AuthScreen = () => {
         isVisible={modalErrorIsVisible}
         setIsVisible={(status) => setModalErrorIsVisible(status)}
       >
-        <>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Conta não encontrada
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            O email ou CPF/CNPJ inseridos não foram encontrados em nossa base de
-            clientes inscritos em VAlora 2023. Verifique se está usando os
-            mesmos dados cadastrados ou se realizou a inscrição corretamente.
-          </Typography>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-end",
-            }}
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Conta não encontrada
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          O email ou CPF/CNPJ inseridos não foram encontrados em nossa base de
+          clientes inscritos em VAlora 2023. Verifique se está usando os mesmos
+          dados cadastrados ou se realizou a inscrição corretamente.
+        </Typography>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            style={{ backgroundColor: "transparent" }}
+            onClick={() => setModalErrorIsVisible(false)}
           >
-            <Button
-              style={{ backgroundColor: "transparent" }}
-              onClick={() => setModalErrorIsVisible(false)}
-            >
-              <BaseText size={17} bold color={Colors.purple}>
-                Tentar novamente
-              </BaseText>
-            </Button>
-          </div>
-        </>
+            <BaseText size={17} bold color={Colors.purple}>
+              Tentar novamente
+            </BaseText>
+          </Button>
+        </div>
       </BasicModal>
       <Container>
         <div style={{ marginBottom: 30 }}>

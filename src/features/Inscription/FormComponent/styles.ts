@@ -16,7 +16,7 @@ export const Container = styled.div`
   background-color: #f0f0f0;
 `;
 
-export const Input = styled.input`
+export const InputField = styled.input`
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;

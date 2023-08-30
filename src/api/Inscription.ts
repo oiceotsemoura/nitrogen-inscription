@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 
-interface LoginReq {
+interface InscriptionReq {
   email: string;
   cpf: string;
+  values: Input;
 }
 
 interface Input {
@@ -13,24 +14,24 @@ interface Input {
   field_status: string;
   nitrogen_dose: number;
   nitrogen_source: string;
+  nitrogen_date: string;
 }
 
-interface Field {
-  enrollment_id: number;
-  field_name: string;
-  input: Input;
-}
+export const saveValue = async (req: InscriptionReq) => {
+  const { cpf, email, values } = req;
 
-interface LoginRes {
-  email: string;
-  fields: Field[];
-  growing_season: string;
-  name: string;
-}
-
-export const login = async (values: LoginReq) => {
-  const response: AxiosResponse<LoginRes> = await axios.get(
-    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valGetFieldsInfo?email=${values.email}&cpf=${values.cpf}`
+  const valuesParsed = {
+    ...values,
+    enrollment_id: values.enrollment_id as number,
+    nitrogen_dose: values.nitrogen_dose ? Number(values.nitrogen_dose) : null,
+    checkstrip_dose: values.checkstrip_dose
+      ? Number(values.checkstrip_dose)
+      : null,
+    completed: values.completed as boolean,
+  };
+  const response: AxiosResponse<any> = await axios.put(
+    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valNitrogenForm?email=${email}&cpf=${cpf}`,
+    valuesParsed
   );
   return response;
 };

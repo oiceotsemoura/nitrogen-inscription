@@ -1,18 +1,19 @@
 import axios, { AxiosResponse } from "axios";
 
-interface LoginReq {
+export interface LoginReq {
   email: string;
   cpf: string;
 }
 
-interface Input {
-  checkstrip_dose: number;
-  completed: boolean;
-  dose_type: string;
-  enrollment_id: number;
-  field_status: "completed" | "empty" | "started";
-  nitrogen_dose: number;
-  nitrogen_source: string;
+export interface Input {
+  checkstrip_dose?: number;
+  completed?: boolean;
+  dose_type?: string;
+  enrollment_id?: number;
+  field_status?: "completed" | "empty" | "started";
+  nitrogen_dose?: number;
+  nitrogen_source?: string;
+  nitrogen_date?: string;
 }
 
 interface Field {

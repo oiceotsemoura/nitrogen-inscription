@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Accordion,
@@ -12,17 +12,10 @@ import {
   Autocomplete,
   TextField,
 } from "@mui/material";
-import { LoginRes } from "../../api/Auth";
+import { LoginRes, login } from "../../api/Auth";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FormComponent } from "./FormComponent/FormComponent";
 import { Card, Container, Input, Label } from "./styles";
-
-const talhoes = [
-  { id: 1, name: "Talhão 1", status: "Em andamento", inputs: {} },
-  { id: 2, name: "Talhão 2", status: "Não preenchido", inputs: {} },
-  { id: 3, name: "Talhão 3", status: "Não preenchido", inputs: {} },
-  { id: 4, name: "Talhão 4", status: "Concluido", inputs: {} },
-];
 
 const chipColor = (status: string) => {
   if (status === "started") return "warning";
@@ -37,14 +30,59 @@ const statusObject = {
   empty: "Não preenchido",
 };
 
+interface userData extends LoginRes {
+  cpf: string;
+}
+
 export const InscriptionScreen = () => {
-  const userData: LoginRes = JSON.parse(
+  const userData: userData = JSON.parse(
     localStorage.getItem("userData") as string
   );
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await login({ cpf: userData.cpf, email: userData.email });
+        const values = JSON.stringify({ cpf: userData.cpf, ...res.data });
+
+        localStorage.setItem("userData", values);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, [userData]);
+
+  const [userDataState, setUserDataState] = useState<userData>(userData);
+
+  const changeStateOfField = (state: string, index: number) => {
+    const newFields = userDataState;
+    console.log("starts", index);
+
+    if (
+      state === "started" &&
+      newFields.fields[index].input.field_status !== "started"
+    ) {
+      newFields.fields[index].input.field_status = "started";
+    }
+    if (
+      state === "completed" &&
+      newFields.fields[index].input.field_status !== "completed"
+    ) {
+      newFields.fields[index].input.field_status = "completed";
+      newFields.fields[index].input.completed = true;
+    }
+    setUserDataState({ ...newFields });
+    // if (userDataState.fields[index].input.field_status === "empty") {
+    //   const newFields = userDataState;
+    //   console.log("starts", index);
+    //   newFields.fields[index].input.field_status = "started";
+    // }
+  };
+
   return (
     <Container>
-      {userData.fields.map((field, index) => {
+      {userDataState.fields.map((field, index) => {
+        console.log(field.input);
         return (
           <div style={{ marginBottom: 10 }}>
             <Accordion>
@@ -64,13 +102,24 @@ export const InscriptionScreen = () => {
                 >
                   <Typography>{field.field_name}</Typography>
                   <Chip
-                    color={chipColor(field.input.field_status)}
-                    label={statusObject[field.input.field_status]}
+                    color={chipColor(field.input.field_status as string)}
+                    label={
+                      statusObject[
+                        field.input?.field_status as keyof typeof statusObject
+                      ]
+                    }
                   />
                 </div>
               </AccordionSummary>
               <AccordionDetails>
-                <FormComponent />
+                <FormComponent
+                  index={index}
+                  changeState={(state: string, index: number) =>
+                    changeStateOfField(state, index)
+                  }
+                  fields={field.input}
+                  userData={{ cpf: userData.cpf, email: userData.email }}
+                />
               </AccordionDetails>
             </Accordion>
           </div>
